@@ -1,7 +1,15 @@
 #include "EnergySaving.h"
 
+void EnergySaving::begin(){
+	#ifdef ARDUINO_SAMD_TIAN
+	pinMode(MIPS_PIN, OUTPUT);
+	#endif
+}
+
 void EnergySaving::begin(unsigned int mode, unsigned int inter_pin, voidFuncPtr callback)
 {
+
+	begin();
 	if((mode == WAKE_EXT_INTERRUPT) && (inter_pin !=2) &&  (inter_pin!=0) && (inter_pin!=1))
 	{
 		 NVMCTRL->CTRLB.bit.SLEEPPRM = 3;
@@ -20,6 +28,8 @@ void EnergySaving::begin(unsigned int mode, unsigned int inter_pin, voidFuncPtr 
 
 void EnergySaving::begin(unsigned int mode)
 {
+	begin();
+
 	if(mode == WAKE_RTC_ALARM)
 	{
 		//RTCInt.begin(TIME_H24);
@@ -46,7 +56,7 @@ void EnergySaving::begin(unsigned int mode)
 void EnergySaving::standby(void)
 {
 	__DSB();
-    __WFI();
+	__WFI();
 
 }
 
@@ -109,3 +119,23 @@ void EnergySaving::enable_eic_wake(unsigned int inter_pin)
 				break;
 		}
 }
+
+#ifdef ARDUINO_SAMD_TIAN
+
+// EnergySaving::begin(){
+// 	pinMode(MIPS_PIN, OUTPUT);
+// }
+
+void EnergySaving::maxLowPowerMode()
+{
+	//Energy Saving Tian OFF
+	digitalWrite(MIPS_PIN, LOW);
+}
+
+void EnergySaving::noLowPowerMode()
+{
+	//Energy Saving Tian ON
+	digitalWrite(MIPS_PIN, HIGH);
+}
+
+#endif

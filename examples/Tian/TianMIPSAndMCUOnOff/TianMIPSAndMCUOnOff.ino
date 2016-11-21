@@ -9,14 +9,16 @@ Users can power up or power down MIPS and MCU with an external interrupt.
 
 EnergySaving nrgSave;
 
+
 #define MIPS_PIN 32  //PA28 PIN 32
 
 void setup()
 {
-  pinMode(MIPS_PIN,OUTPUT);
-  digitalWrite(MIPS_PIN,HIGH);
+  // pinMode(MIPS_PIN,OUTPUT);
+  // digitalWrite(MIPS_PIN,HIGH);
 
-  nrgSave.begin(WAKE_EXT_INTERRUPT, 8, wakeUp);  //standby setup for external interrupts
+	nrgSave.begin(WAKE_EXT_INTERRUPT, 8, wakeUp);  //standby setup for external interrupts
+	nrgSave.noLowPowerMode();
 }
 
 void loop()
@@ -37,7 +39,8 @@ void doSomething(){
 }
 
 void sleep(void){
-  digitalWrite(MIPS_PIN, LOW);
+  //digitalWrite(MIPS_PIN, LOW);
+	nrgSave.maxLowPowerMode();
   nrgSave.standby();  //now mcu goes in standby mode
 }
 
@@ -46,5 +49,6 @@ void wakeUp(void)  //interrupt routine (isn't necessary to execute any tasks in 
   //mcu is waked-up by the interrupt
 
   //wake up mips
-  digitalWrite(MIPS_PIN,HIGH);
+  //digitalWrite(MIPS_PIN,HIGH);
+	nrgSave.noLowPowerMode();
 }
